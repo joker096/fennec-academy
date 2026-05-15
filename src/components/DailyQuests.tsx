@@ -110,7 +110,7 @@ export default function DailyQuests() {
   }, [t, dailyProgress]);
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden group/container transition-all">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-xl relative overflow-hidden group/container transition-all">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 relative z-10">
@@ -124,7 +124,7 @@ export default function DailyQuests() {
             </h2>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              <p className="text-slate-400 dark:text-slate-500 text-[9px] font-bold uppercase tracking-widest leading-none">
+              <p className="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-widest leading-none">
                 {t.complete_for_rewards || 'SYNC PROGRESS FOR DAILY REWARDS'}
               </p>
             </div>
@@ -147,7 +147,7 @@ export default function DailyQuests() {
           return (
             <div 
               key={quest.id}
-              className={`p-6 rounded-[1.5rem] border transition-all duration-500 group relative overflow-hidden ${
+              className={`p-6 rounded-xl border transition-all duration-500 group relative overflow-hidden ${
                 isClaimed 
                   ? 'border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/20 opacity-60' 
                   : 'bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:border-primary/20 hover:shadow-xl hover:-translate-y-1'

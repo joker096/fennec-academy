@@ -16,13 +16,13 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ t, credits, factionId })
       <div className="flex items-center gap-2.5 px-6 py-3 bg-card border border-border rounded-xl group/credits shadow-sm">
         <Coins className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
         <span className="font-bold text-lg text-slate-900 dark:text-white leading-none">{credits}</span>
-        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-0.5">{t.credits || 'Credits'}</span>
+        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider leading-none mt-0.5">{t.credits || 'Credits'}</span>
       </div>
 
       {factionId ? (
         <Link to="/factions" className="flex items-center gap-2.5 px-6 py-3 bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/30 rounded-xl hover:border-indigo-300 transition-all group/faction">
           <ShieldCheck className="w-4 h-4 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform" />
-          <span className="font-bold text-xs text-indigo-900 dark:text-indigo-100 uppercase tracking-tight leading-none">
+          <span className="font-semibold text-sm text-indigo-900 dark:text-indigo-100 uppercase tracking-tight leading-none">
             {FACTIONS.find(f => f.id === factionId)?.name}
           </span>
         </Link>

@@ -8,7 +8,7 @@
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  /* Theme color mapping */
+  /* Color mapping */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -31,10 +31,51 @@
 
   --font-terminal: "JetBrains Mono", ui-monospace, monospace;
 
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
-  --radius-3xl: 1.5rem;
+  /* ================================================
+     DESIGN TOKENS — Spacing & Sizing Scale (4px base)
+     ================================================ */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* Typography Scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  /* Border Radius Scale */
+  --radius-sm: 0.25rem;
   --radius: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+
+  /* Icon Scale */
+  --icon-xs: 1rem;
+  --icon-sm: 1.25rem;
+  --icon-md: 1.5rem;
+  --icon-lg: 2rem;
+  --icon-xl: 3rem;
+
+  /* Card sizing */
+  --card-min-height: 8rem;
+  --card-padding: 1rem;
+
+  /* Border standard */
+  --border-standard: 1px solid var(--color-border);
+  --border-thick: 2px solid var(--color-border);
 
   @keyframes bounce-short {
     0%, 100% { transform: translateY(0); }
@@ -45,8 +86,13 @@
     25% { transform: translateX(-4px); }
     75% { transform: translateX(4px); }
   }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
   --animate-bounce-short: bounce-short 0.5s ease-in-out infinite;
   --animate-shake: shake 0.2s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.3s ease-out;
 }
 
 @layer base {
@@ -178,5 +224,42 @@ body {
 
 .brutal-border {
   @apply border-2 border-slate-900 dark:border-slate-100;
+}
+
+/* Standardized card chrome */
+.card-standard {
+  @apply rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:shadow-md transition-all duration-300;
+}
+
+.card-standard-active {
+  @apply border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.15)];
+}
+
+/* Standard section title */
+.section-title {
+  @apply text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-6;
+}
+
+/* Standard label */
+.label-sm {
+  @apply text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400;
+}
+
+.label-xs {
+  @apply text-[8px] font-mono font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500;
+}
+
+/* Standard button sizes */
+.btn-sm {
+  @apply px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all active:scale-95;
+}
+
+.btn-md {
+  @apply px-6 py-2.5 rounded-lg text-sm font-bold uppercase tracking-wider transition-all active:scale-[0.97];
+}
+
+/* Standard badge */
+.badge-standard {
+  @apply text-[8px] font-mono font-black px-1.5 py-0.5 rounded-full border;
 }
 

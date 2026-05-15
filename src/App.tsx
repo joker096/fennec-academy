@@ -11,6 +11,7 @@ import { UI_TRANSLATIONS } from './data/translations';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import MapSidebar from './components/MapSidebar';
 import AvatarWithFrame from './components/AvatarWithFrame';
+import NavLink from './components/NavLink';
 import { AVATARS, getAvatarUrl } from './data/avatars';
 import { useT } from './lib/i18n';
 import { hasApiKey } from './services/geminiService';
@@ -379,7 +380,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-[70] w-80 md:w-72 bg-slate-50 dark:bg-slate-950 border-r-2 border-slate-200 dark:border-slate-900 shadow-2xl md:shadow-none overflow-hidden flex flex-col`}>
+      <aside className={`fixed inset-y-0 left-0 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-[70] w-72 md:w-80 bg-slate-50 dark:bg-slate-950 border-r-2 border-slate-200 dark:border-slate-900 shadow-2xl md:shadow-none overflow-hidden flex flex-col`}>
         <div className="p-4 border-b-2 border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 relative overflow-hidden">
           <Link to="/" className="flex items-center gap-2 group/logo">
             <div className="w-8 h-8 bg-white dark:bg-slate-900 rounded-md flex items-center justify-center shadow-sm relative border-2 border-slate-200 dark:border-slate-800 shrink-0 overflow-hidden">
@@ -671,42 +672,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <ScrollToTop />
       </main>
     </div>
-  );
-}
-
-function NavLink({ to, icon, label, active, badge, progress }: { to: string; icon: React.ReactNode; label: string; active: boolean; badge?: number; progress?: number }) {
-  return (
-    <Link
-      to={to}
-      className={`relative flex flex-col px-4 py-3 transition-all duration-300 group overflow-hidden rounded border-2 ${
-        active 
-          ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 z-20' 
-          : 'bg-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 border-transparent hover:border-slate-200 dark:hover:border-slate-800'
-      }`}
-    >
-      <div className="flex items-center justify-between w-full relative z-10">
-        <div className="flex items-center gap-3">
-          <span className={`${active ? 'text-white' : 'text-slate-400 group-hover:text-primary'} transition-colors shrink-0`}>
-            {React.cloneElement(icon as any, { className: 'w-4 h-4' })}
-          </span>
-          <span className="font-mono font-bold text-[10px] uppercase tracking-widest">{label}</span>
-        </div>
-        {badge !== undefined && badge > 0 && (
-          <span className={`text-[8px] font-mono font-black px-1.5 py-0.5 rounded border ${active ? 'bg-white text-primary border-white' : 'bg-primary text-white border-primary'}`}>
-            {badge}
-          </span>
-        )}
-      </div>
-      {progress !== undefined && (
-        <div className={`w-full h-1 mt-2.5 rounded-full overflow-hidden relative z-10 ${active ? 'bg-white/20' : 'bg-slate-200 dark:bg-slate-800'}`}>
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            className={`h-full ${active ? 'bg-white' : 'bg-primary'}`}
-          />
-        </div>
-      )}
-    </Link>
   );
 }
 

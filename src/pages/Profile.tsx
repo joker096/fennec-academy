@@ -244,7 +244,7 @@ Join me at the Academy!
           animate={{ opacity: 1, x: 0 }}
           className="lg:col-span-2 space-y-8"
         >
-          <div className="bg-card rounded-2xl p-4 md:p-6 border border-border shadow-sm relative overflow-hidden">
+          <div className="bg-card rounded-xl p-4 md:p-6 border border-border shadow-sm relative overflow-hidden">
             <div className="flex items-center justify-between mb-4 relative z-10">
               <h2 className="text-lg font-black text-foreground flex items-center gap-2 uppercase tracking-tight">
                 <div className="p-2 bg-primary/10 rounded-lg text-primary shadow-sm border border-primary/20">
@@ -262,8 +262,8 @@ Join me at the Academy!
                         {stat.icon}
                       </div>
                       <div className="space-y-0.5">
-                        <h3 className="text-[11px] font-black text-foreground uppercase tracking-tight">{stat.label}</h3>
-                        <p className="text-[7px] font-black text-slate-400 uppercase tracking-widest">{stat.description.slice(0, 50)}...</p>
+<h3 className="text-[10px] font-black text-foreground uppercase tracking-tight">{stat.label}</h3>
+                         <p className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">{stat.description.slice(0, 50)}...</p>
                       </div>
                     </div>
                     <div className="text-right flex items-center gap-2">
@@ -272,7 +272,7 @@ Join me at the Academy!
                   </div>
                   
                   <div className="space-y-1">
-                    <div className="flex justify-between items-center text-[7px] font-black uppercase tracking-widest text-slate-400">
+                    <div className="flex justify-between items-center text-[8px] font-bold uppercase tracking-wider text-slate-400">
                       <span>BOOST_PROBABILITY</span>
                       <span className="text-primary">{stat.progress}%</span>
                     </div>
@@ -285,7 +285,7 @@ Join me at the Academy!
             </div>
           </div>
 
-          <div className="bg-card rounded-3xl p-6 md:p-8 border border-border shadow-xl relative overflow-hidden">
+          <div className="bg-card rounded-xl p-6 md:p-8 border border-border shadow-xl relative overflow-hidden">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-bold text-foreground flex items-center gap-3 tracking-tight relative z-10 uppercase">
                  <div className="p-2.5 bg-amber-500/10 rounded-xl text-amber-500 shadow-sm border border-amber-500/20">

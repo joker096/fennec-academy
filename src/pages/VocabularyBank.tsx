@@ -174,7 +174,7 @@ export default function VocabularyBank() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Sidebar: Word List */}
         <div className="lg:col-span-1 space-y-8">
-          <div className="bg-card p-8 rounded-3xl border border-border shadow-xl">
+          <div className="bg-card rounded-2xl border border-border shadow-xl">
             <div className="relative mb-6">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
@@ -291,7 +291,7 @@ export default function VocabularyBank() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="bg-card rounded-[2.5rem] border border-border shadow-2xl overflow-hidden"
+                className="bg-card rounded-2xl border border-border shadow-2xl overflow-hidden"
               >
                 {/* Header */}
                 <div className="p-8 md:p-10 bg-gradient-to-br from-indigo-600 to-violet-700 text-white relative overflow-hidden">
@@ -355,15 +355,15 @@ export default function VocabularyBank() {
                   {activeTab === 'examples' && (
                     <div className="space-y-6">
                       {!isPremium ? (
-                        <div className="bg-muted/50 p-10 rounded-3xl border-2 border-dashed border-border text-center">
-                          <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <div className="bg-muted/50 p-6 rounded-2xl border-2 border-dashed border-border text-center">
+                          <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-xl flex items-center justify-center mx-auto mb-4">
                             <Lock className="w-8 h-8" />
                           </div>
                           <h3 className="text-xl font-bold text-foreground mb-2">{t.premium_examples_title}</h3>
                           <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto">
                             {t.premium_examples_desc}
                           </p>
-                          <button className="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-500/20 flex items-center gap-2 mx-auto">
+                          <button className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2 mx-auto">
                             <Sparkles className="w-5 h-5" />
                             {t.upgrade_to_premium || 'Upgrade to Premium'}
                           </button>
@@ -385,7 +385,7 @@ export default function VocabularyBank() {
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: i * 0.1 }}
-                              className="bg-muted/50 p-6 rounded-3xl border border-border group hover:border-indigo-500/30 transition-all"
+                              className="bg-muted/50 p-4 rounded-xl border border-border group hover:border-indigo-500/30 transition-all"
                             >
                               <div className="flex justify-between items-start gap-4 mb-3">
                                 <p className="text-lg font-medium text-foreground leading-relaxed">
@@ -471,7 +471,7 @@ export default function VocabularyBank() {
                             </h4>
                             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {deepDive.grammarRules.map((rule, i) => (
-                                <li key={i} className="bg-indigo-50/50 dark:bg-indigo-900/10 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 text-sm text-indigo-700 dark:text-indigo-300 font-medium flex items-start gap-3">
+                                <li key={i} className="bg-indigo-50/50 dark:bg-indigo-900/10 p-3 rounded-xl border border-indigo-100 dark:border-indigo-900/30 text-sm text-indigo-700 dark:text-indigo-300 font-medium flex items-start gap-2">
                                   <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full mt-1.5 shrink-0" />
                                   {rule}
                                 </li>
@@ -495,7 +495,7 @@ export default function VocabularyBank() {
                         <div className="text-center py-10">
                           <button 
                             onClick={handleFetchDeepDive}
-                            className="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-500/20"
+                            className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-500/20"
                           >
                             {t.start_deep_analysis || 'Start Deep Analysis'}
                           </button>
@@ -506,7 +506,7 @@ export default function VocabularyBank() {
                 </div>
               </motion.div>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-center p-10 bg-muted/50 rounded-[2.5rem] border-2 border-dashed border-border">
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-muted/50 rounded-xl border-2 border-dashed border-border">
                 <div className="w-20 h-20 bg-card rounded-3xl flex items-center justify-center shadow-xl mb-6">
                   <BookOpen className="w-10 h-10 text-slate-300" />
                 </div>
@@ -534,7 +534,7 @@ export default function VocabularyBank() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-lg bg-card border border-border rounded-[2.5rem] shadow-2xl overflow-hidden"
+              className="relative w-full max-w-lg bg-card border border-border rounded-xl shadow-2xl overflow-hidden"
             >
               <div className="p-8 border-b border-border flex items-center justify-between bg-indigo-600 text-white">
                 <div>

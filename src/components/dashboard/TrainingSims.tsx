@@ -26,7 +26,7 @@ export const TrainingSims: React.FC<TrainingSimsProps> = ({ t }) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="p-8 md:p-10 relative overflow-hidden group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] shadow-xl"
+      className="p-6 md:p-8 relative overflow-hidden group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl"
     >
       <div className="relative z-10">
         <div className="flex items-center gap-4 mb-8">
@@ -34,10 +34,10 @@ export const TrainingSims: React.FC<TrainingSimsProps> = ({ t }) => {
             <span className="text-2xl">🧠</span>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
               {t.cognitive_simulations || 'Cognitive Simulations'}
             </h2>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-1">
               {t.simulations_desc || 'Interactive academic training modules'}
             </p>
           </div>
@@ -53,8 +53,8 @@ export const TrainingSims: React.FC<TrainingSimsProps> = ({ t }) => {
                   <span className="text-2xl">{sim.icon}</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-slate-900 dark:text-white uppercase tracking-tight group-hover/card:text-primary transition-colors">{sim.title}</h3>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-2">{sim.desc}</p>
+<h3 className="font-bold text-sm text-slate-900 dark:text-white uppercase tracking-tight group-hover/card:text-primary transition-colors">{sim.title}</h3>
+                   <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider mt-1">{sim.desc}</p>
                 </div>
               </Link>
             </Tooltip>

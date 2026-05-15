@@ -131,7 +131,7 @@ export default function Library() {
         title={t.library} 
         description={t.library_seo_desc}
       />
-      <div className="bg-card p-10 md:p-16 rounded-[2.5rem] border border-border text-center relative overflow-hidden group shadow-xl">
+      <div className="bg-card p-8 md:p-12 rounded-2xl border border-border text-center relative overflow-hidden group shadow-xl">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(currentColor_1px,transparent_0)] bg-[size:30px_30px]" />
         <div className="relative z-10 space-y-6">
           <Database className="w-20 h-20 mx-auto mb-4 text-primary" />
@@ -145,7 +145,7 @@ export default function Library() {
       <KnowledgeGraph searchQuery={searchQuery} />
 
       {/* Broken Terminal (Mistakes Bank) */}
-      <div className="bg-card border border-border rounded-[2.5rem] p-10 relative overflow-hidden shadow-xl">
+      <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden shadow-xl">
         <div className="absolute top-0 right-0 p-6 opacity-[0.03]">
           <Terminal className="w-32 h-32" />
         </div>
@@ -183,7 +183,7 @@ export default function Library() {
               </div>
             </div>
             
-            <div className="bg-muted/30 rounded-2xl border border-border p-6 text-[11px] text-muted-foreground font-medium h-56 overflow-y-auto custom-scrollbar text-left shadow-inner uppercase tracking-wider">
+            <div className="bg-muted/30 rounded-xl border border-border p-4 text-[10px] text-muted-foreground font-medium h-56 overflow-y-auto custom-scrollbar text-left shadow-inner uppercase tracking-wider">
               {Object.keys(mistakes).length > 0 ? (
                 <div className="space-y-3">
                   {Object.entries(mistakes).map(([wordId, mistake]) => (
@@ -209,7 +209,7 @@ export default function Library() {
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-card p-6 rounded-3xl border border-border shadow-lg relative overflow-hidden">
+      <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-card p-4 rounded-2xl border border-border shadow-lg relative overflow-hidden">
         <div className="relative w-full md:w-[32rem] z-10 flex gap-4">
           <div className="relative flex-1 group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -255,11 +255,11 @@ export default function Library() {
           return (
             <div 
               key={tape.id}
-              className={`relative rounded-[2rem] overflow-hidden transition-all duration-500 bg-card border shadow-xl group ${
-                isUnlocked 
-                  ? 'border-border hover:border-primary/40 cursor-pointer hover:-translate-y-2 hover:shadow-2xl' 
-                  : 'border-border opacity-60 grayscale cursor-not-allowed'
-              }`}
+className={`relative rounded-[2rem] overflow-hidden transition-all duration-500 bg-card border shadow-xl group ${
+                 isUnlocked
+                   ? 'border-border hover:border-primary/40 cursor-pointer hover:-translate-y-2 hover:shadow-2xl'
+                   : 'border-border opacity-60 grayscale cursor-not-allowed'
+               }`}
               onClick={() => handleTapeClick(tape.id, isUnlocked)}
             >
               {/* Top Bar */}

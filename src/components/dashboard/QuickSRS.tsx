@@ -29,26 +29,26 @@ export const QuickSRS: React.FC<QuickSRSProps> = ({
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] relative overflow-hidden transition-all group shadow-xl"
+      className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl relative overflow-hidden transition-all group shadow-xl"
     >
       <div className="flex flex-col md:flex-row items-center justify-between gap-10">
         <div className="max-w-md text-left">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-4 tracking-tight mb-4 uppercase">
-            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
-              <Zap className="w-6 h-6 fill-white" />
-            </div>
-            {t.quick_srs_training || 'Survival Vocabulary Training'}
-          </h2>
+<h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3 tracking-tight mb-4 uppercase">
+             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white shadow-md shadow-primary/20">
+               <Zap className="w-5 h-5 fill-white" />
+             </div>
+             {t.quick_srs_training || 'Survival Vocabulary Training'}
+           </h2>
           <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-8">
             {t.quick_srs_desc || 'Spaced repetition keeps your memory sharp.'}
           </p>
           <div className="flex flex-wrap items-center gap-6">
-            <div className="px-5 py-2.5 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-xl font-bold text-[10px] uppercase tracking-[0.2em] shadow-sm">
+            <div className="px-5 py-2 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-lg font-bold text-[10px] uppercase tracking-[0.2em] shadow-sm">
               {t.critical_data || 'priority: urgent'}
             </div>
             <Link
               to="/flashcards"
-              className="text-[10px] font-bold text-primary hover:text-primary/80 flex items-center gap-2 uppercase tracking-[0.2em]"
+              className="text-[10px] font-bold text-primary hover:text-primary/80 flex items-center gap-1.5 uppercase tracking-[0.2em]"
             >
               {t.view_all || 'View Full Library'}
               <ChevronRight className="w-4 h-4" />
@@ -56,7 +56,7 @@ export const QuickSRS: React.FC<QuickSRSProps> = ({
           </div>
         </div>
 
-        <div className="w-full max-w-[360px] p-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-3xl shadow-2xl relative">
+        <div className="w-full max-w-[360px] p-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl shadow-xl relative">
           <SRSFlashcard
             word={nextDueWord}
             onComplete={() => {

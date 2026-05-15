@@ -113,7 +113,7 @@ export default function Quests() {
             </div>
           </div>
 
-          <div className="mt-8 p-8 bg-indigo-50 dark:bg-indigo-950/20 rounded-[2rem] border border-indigo-100 dark:border-indigo-900/30 relative z-10 overflow-hidden">
+          <div className="mt-6 p-6 bg-indigo-50 dark:bg-indigo-950/20 rounded-xl border border-indigo-100 dark:border-indigo-900/30 relative z-10 overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <h4 className="text-[10px] font-bold text-primary uppercase tracking-[0.3em] mb-4">{t.next_milestone || 'Projected Progression'}</h4>
             <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-widest">
@@ -138,32 +138,32 @@ export default function Quests() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-        <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 group hover:shadow-xl hover:-translate-y-1 transition-all">
-          <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 group hover:shadow-xl hover:-translate-y-1 transition-all">
+          <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             <Zap className="w-6 h-6" />
           </div>
-          <h3 className="font-bold text-lg text-slate-900 dark:text-white uppercase tracking-tight mb-3">{t.earn_xp_title}</h3>
-          <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">
+          <h3 className="font-bold text-base text-slate-900 dark:text-white uppercase tracking-tight mb-2">{t.earn_xp_title}</h3>
+          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">
             {t.earn_xp_desc}
           </p>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 group hover:shadow-xl hover:-translate-y-1 transition-all">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 group hover:shadow-xl hover:-translate-y-1 transition-all">
           <div className="w-14 h-14 bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
             <Star className="w-6 h-6" />
           </div>
-          <h3 className="font-bold text-lg text-slate-900 dark:text-white uppercase tracking-tight mb-3">{t.daily_quests}</h3>
-          <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">
+          <h3 className="font-bold text-base text-slate-900 dark:text-white uppercase tracking-tight mb-2">{t.daily_quests}</h3>
+          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">
             {t.daily_quests_footer_desc}
           </p>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 group hover:shadow-xl hover:-translate-y-1 transition-all">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 group hover:shadow-xl hover:-translate-y-1 transition-all">
           <div className="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
             <Award className="w-6 h-6" />
           </div>
-          <h3 className="font-bold text-lg text-slate-900 dark:text-white uppercase tracking-tight mb-3">{t.achievements}</h3>
-          <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">
+          <h3 className="font-bold text-base text-slate-900 dark:text-white uppercase tracking-tight mb-2">{t.achievements}</h3>
+          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">
             {t.achievements_footer_desc}
           </p>
         </div>

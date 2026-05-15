@@ -378,128 +378,128 @@ export default function Perks() {
             const isDisabled = !isUnlockedByLevel;
             const theme = getStatTheme(perk.stat);
 
-            return (
-              <motion.div 
-                layout
-                key={perk.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                whileHover={!isDisabled ? { y: -5 } : {}}
-                onClick={() => handleAction(perk.id, isUnlockedByLevel)}
-                className={`group relative flex flex-col rounded-2xl transition-all cursor-pointer overflow-hidden border-2 h-full shadow-sm hover:shadow-xl ${
-                  isEquipped 
-                    ? `${theme.border} ${theme.bg}` 
-                    : !isPurchased && isUnlockedByLevel
-                      ? `${theme.border} bg-white dark:bg-slate-900 border-dashed`
-                      : isDisabled
-                        ? 'opacity-40 border-slate-200 dark:border-slate-800 grayscale cursor-not-allowed bg-slate-100 dark:bg-slate-950/50'
-                        : `${theme.border} bg-white dark:bg-slate-900 border-2`
-                }`}
-              >
-                {/* Header */}
-                <div className={`h-10 px-4 flex items-center justify-between border-b transition-colors ${
-                   isEquipped ? `${theme.header} text-white` : `${theme.bg} ${theme.text} border-b-current/10`
-                }`}>
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <span className={`text-[10px] font-black uppercase tracking-widest truncate ${isEquipped ? 'text-white' : theme.text}`}>
-                      {translation.name}
-                    </span>
-                  </div>
-                  {isEquipped ? (
-                    <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />
-                  ) : (
-                    <div className="flex items-center gap-1.5">
-                      <span className={`text-[8px] font-black uppercase tracking-tighter opacity-80`}>{perk.stat}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 p-3 relative flex flex-col">
-                   <div className={`absolute top-2 right-2 font-black text-[9px] flex items-center gap-1 z-10 px-2 py-0.5 rounded-full border ${
-                     isEquipped 
-                       ? `${theme.header} text-white border-white/20` 
-                       : `bg-white dark:bg-slate-800 ${theme.text} ${theme.accent}`
-                   }`}>
-                      <Coins className="w-2.5 h-2.5" />
-                      {perk.cost}
+return (
+               <motion.div
+                 layout
+                 key={perk.id}
+                 initial={{ opacity: 0, scale: 0.95 }}
+                 animate={{ opacity: 1, scale: 1 }}
+                 exit={{ opacity: 0, scale: 0.95 }}
+                 whileHover={!isDisabled ? { y: -4 } : {}}
+                 onClick={() => handleAction(perk.id, isUnlockedByLevel)}
+                 className={`group relative flex flex-col rounded-xl transition-all duration-300 cursor-pointer overflow-hidden border-2 h-full shadow-sm hover:shadow-xl ${
+                   isEquipped
+                     ? `${theme.border} ${theme.bg}`
+                     : !isPurchased && isUnlockedByLevel
+                       ? `${theme.border} border-opacity-30 bg-white dark:bg-slate-900`
+                       : isDisabled
+                         ? 'opacity-40 border-slate-200 dark:border-slate-800 grayscale cursor-not-allowed bg-slate-100 dark:bg-slate-950/50'
+                         : `${theme.border} bg-white dark:bg-slate-900 border-2`
+                 }`}
+               >
+                 {/* Header: h-10, rounded-t */}
+                 <div className={`h-10 px-4 flex items-center justify-between rounded-t-lg border-b transition-colors ${
+                    isEquipped ? `${theme.header} text-white border-white/20` : `${theme.bg} ${theme.text} border-b-current/10`
+                 }`}>
+                   <div className="flex items-center gap-2 overflow-hidden">
+                     <span className={`text-[10px] font-black uppercase tracking-widest truncate ${isEquipped ? 'text-white' : theme.text}`}>
+                       {translation.name}
+                     </span>
                    </div>
- 
+                   {isEquipped ? (
+                     <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />
+                   ) : (
+                     <div className="flex items-center gap-1.5">
+                       <span className={`text-[8px] font-black uppercase tracking-tighter opacity-80 ${theme.text}`}>{perk.stat}</span>
+                     </div>
+                   )}
+                 </div>
+
+                 {/* Content */}
+                 <div className="flex-1 p-3 relative flex flex-col">
+                    <div className={`absolute top-2 right-2 font-black text-[9px] flex items-center gap-1 z-10 px-2 py-0.5 rounded-full border ${
+                      isEquipped
+                        ? `${theme.header} text-white border-white/20`
+                        : `bg-white dark:bg-slate-800 ${theme.text} ${theme.accent}`
+                    }`}>
+                       <Coins className="w-2.5 h-2.5" />
+                       {perk.cost}
+                    </div>
+
                     <div className="aspect-square rounded-xl bg-slate-100 dark:bg-slate-800/50 mb-3 flex items-center justify-center border border-slate-200 dark:border-slate-800 overflow-hidden relative shadow-inner shrink-0">
-                       <img 
-                         src={perk.imageUrl} 
-                         className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${isEquipped ? 'grayscale-0 opacity-100' : 'grayscale-0 opacity-80 group-hover:opacity-100'}`} 
+                       <img
+                         src={perk.imageUrl}
+                         className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 grayscale-0 ${isEquipped ? 'opacity-100 grayscale-0' : 'opacity-80 grayscale group-hover:opacity-100 group-hover:grayscale-0'}`}
                          referrerPolicy="no-referrer"
                        />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
                     </div>
- 
+
                     <div className="flex-1 space-y-2">
                        <p className={`text-[11px] font-bold tracking-tight leading-snug line-clamp-2 ${isEquipped ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>
                          {translation.description}
                        </p>
- 
+
                        <div className={`p-2 rounded-lg transition-all border ${
-                         isEquipped 
-                           ? `${theme.bg} ${theme.accent} ${theme.text}` 
+                         isEquipped
+                           ? `${theme.bg} ${theme.accent} ${theme.text}`
                            : `bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 ${theme.lightText}`
                        }`}>
-                         <p className="text-[10px] font-black italic leading-tight uppercase tracking-tight">
-                           {translation.effect}
-                         </p>
+                          <p className="text-[10px] font-black italic leading-tight uppercase tracking-tight">
+                            {translation.effect}
+                          </p>
                        </div>
                     </div>
-                 </div>
- 
+                  </div>
+
                  {/* Action */}
                  <div className={`p-2 border-t ${isEquipped ? `${theme.subtle} ${theme.accent}` : 'bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800'}`}>
-                    {!isPurchased && isUnlockedByLevel ? (
-                      <button 
-                         onClick={(e) => {
-                           e.stopPropagation();
-                           handleAction(perk.id, isUnlockedByLevel);
-                         }}
-                         className={`w-full ${theme.header} text-white font-black text-[9px] uppercase py-2 tracking-widest hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2 rounded-xl shadow-sm`}
-                      >
-                         <Coins className="w-3 h-3" />
-                         {uiT.buy_btn || 'BUY'}: {perk.cost}
-                      </button>
-                    ) : isPurchased ? (
-                      <button
-                         onClick={(e) => {
-                           e.stopPropagation();
-                           handleAction(perk.id, isUnlockedByLevel);
-                         }}
-                         className={`w-full font-black text-[9px] uppercase py-2 tracking-widest transition-all rounded-xl border flex items-center justify-center gap-2 ${
-                           isEquipped 
-                             ? `${theme.bg} ${theme.text} ${theme.accent}` 
-                             : `bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:${theme.border} hover:${theme.text}`
-                         }`}
-                      >
-                         {isEquipped ? (
-                           <>
-                             <Check className="w-3 h-3" strokeWidth={4} />
-                             {uiT.equipped || 'EQUIPPED'}
-                           </>
-                         ) : (
-                           <>
-                             <Zap className="w-3 h-3" />
-                             {uiT.ready || 'EQUIP'}
-                           </>
-                         )}
-                      </button>
-                    ) : (
-                      <div className="flex items-center justify-center gap-2 py-1.5 text-slate-400 dark:text-slate-600 bg-slate-100/50 dark:bg-slate-950/20 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
-                         <Lock className="w-3 h-3" />
-                         <span className="text-[8px] font-black uppercase tracking-widest">
-                           {uiT.lvl_label || uiT.rank_label || 'RANK'} {perk.unlockLevel}
-                         </span>
-                      </div>
-                    )}
+                   {!isPurchased && isUnlockedByLevel ? (
+                     <button
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         handleAction(perk.id, isUnlockedByLevel);
+                       }}
+                       className={`w-full ${theme.header} text-white font-black text-[9px] uppercase py-2 tracking-widest hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2 rounded-lg shadow-sm`}
+                     >
+                       <Coins className="w-3 h-3" />
+                       {uiT.buy_btn || 'BUY'}: {perk.cost}
+                     </button>
+                   ) : isPurchased ? (
+                     <button
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         handleAction(perk.id, isUnlockedByLevel);
+                       }}
+                       className={`w-full font-black text-[9px] uppercase py-2 tracking-widest transition-all rounded-lg border flex items-center justify-center gap-2 ${
+                         isEquipped
+                           ? `${theme.bg} ${theme.text} ${theme.accent}`
+                           : `bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:${theme.border} hover:${theme.text}`
+                       }`}
+                     >
+                       {isEquipped ? (
+                         <>
+                           <Check className="w-3 h-3" strokeWidth={4} />
+                           {uiT.equipped || 'EQUIPPED'}
+                         </>
+                       ) : (
+                         <>
+                           <Zap className="w-3 h-3" />
+                           {uiT.ready || 'EQUIP'}
+                         </>
+                       )}
+                     </button>
+                   ) : (
+                     <div className="flex items-center justify-center gap-2 py-1.5 text-slate-400 dark:text-slate-600 bg-slate-100/50 dark:bg-slate-950/20 rounded-lg border border-dashed border-slate-200 dark:border-slate-800">
+                       <Lock className="w-3 h-3" />
+                       <span className="text-[8px] font-black uppercase tracking-widest">
+                         {uiT.lvl_label || uiT.rank_label || 'RANK'} {perk.unlockLevel}
+                       </span>
+                     </div>
+                   )}
                  </div>
-              </motion.div>
-            );
+               </motion.div>
+             );
           })}
         </AnimatePresence>
       </div>
