@@ -6,3 +6,33 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Android signing key
+android/fennec-release-key.jks
+
+# Build/test scripts and utilities
+scripts/
+_transform*
+fix-*.cjs
+fix_*.cjs
+find_*.cjs
+generate-svgs.ts
+download*.ts
+download*.mjs
+update-hints.cjs
+transform_words.cjs
+_extract_keys.js
+keys.txt
+en_keys.txt
+sr_keys.txt
+en_admin_keys.txt
+sr_admin_keys.txt
+metadata.json
+firebase-applet-config.json
+firebase-blueprint.json
+
+# Test artifacts
+test.mp3
+
+# PSD source files
+LOGO/*.psd
