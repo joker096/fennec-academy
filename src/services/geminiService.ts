@@ -1160,18 +1160,6 @@ export interface PronunciationFeedback {
   tips?: string[];
 }
 
-export interface DeepDiveResponse {
-  etymology: string;
-  culturalContext: string;
-  relatedExpressions: string[];
-  definition?: string;
-  mnemonics?: string;
-  commonMistakes?: string[];
-  grammarRules?: string[];
-  pronunciationTips?: string[];
-  culturalNotes?: string[];
-}
-
 export async function fetchPronunciationFeedback(
    targetWord: string,
    userAttempt: string,
@@ -1212,13 +1200,13 @@ export async function fetchPronunciationFeedback(
 }
 
 export interface ConversationResponse {
-  text: string;
-  feedback?: string;
-  correction?: string;
-  suggestions?: string[];
-  culturalNote?: string;
-  suggestedNextSteps?: string[];
-  translation?: string;
+   text: string;
+   feedback?: string;
+   correction?: string;
+   suggestions?: string[];
+   culturalNote?: string;
+   suggestedNextSteps?: string[];
+   translation?: string;
 }
 
 export async function fetchConversationResponse(
@@ -1228,42 +1216,42 @@ export async function fetchConversationResponse(
    scenario: string,
    lessonContext?: string | { currentWord: string; translation: string; mistakes: string[] },
    metrics?: { accuracy: number; speedSeconds: number }
-): Promise<ConversationResponse> {
-  const genAI = checkPrerequisites();
-  const model = "gemini-3-flash-preview";
-  
-  const metricsPart = metrics 
-    ? `\nUser performance metrics - Accuracy: ${(metrics.accuracy * 100).toFixed(1)}%, Response time: ${metrics.speedSeconds.toFixed(1)}s`
-    : '';
-  
-  const contextPart = lessonContext ? `\nCurrent lesson context: ${lessonContext}` : '';
-  
-  const systemInstruction = `You are a friendly conversation tutor helping someone learn ${targetLang} through role-play scenarios.
-${scenario}${contextPart}${metricsPart}
-- Be encouraging and supportive
-- If the user makes a mistake, provide gentle feedback
-- Keep responses natural and conversational
-- Always respond in ${uiLang} for explanations
-- Use simple ${targetLang} vocabulary appropriate for learners
-- Include occasional cultural notes when relevant`;
-  
-  const contents = conversationHistory.map(m => ({
-    role: m.role as "user" | "model",
-    parts: [{ text: m.text }]
-  }));
-  
-  contents.push({ role: "user", parts: [{ text: "(continue the conversation)" }] });
+ ): Promise<ConversationResponse> {
+   const genAI = checkPrerequisites();
+   const model = "gemini-3-flash-preview";
 
-  const result = await genAI.models.generateContent({
-    model,
-    contents,
-    config: {
-      systemInstruction: { parts: [{ text: systemInstruction }] }
-    }
-  });
-  
-  return { text: result.text || '' };
-}
+   const metricsPart = metrics
+     ? `\nUser performance metrics - Accuracy: ${(metrics.accuracy * 100).toFixed(1)}%, Response time: ${metrics.speedSeconds.toFixed(1)}s`
+     : '';
+
+   const contextPart = lessonContext ? `\nCurrent lesson context: ${lessonContext}` : '';
+
+   const systemInstruction = `You are a friendly conversation tutor helping someone learn ${targetLang} through role-play scenarios.
+   ${scenario}${contextPart}${metricsPart}
+   - Be encouraging and supportive
+   - If the user makes a mistake, provide gentle feedback
+   - Keep responses natural and conversational
+   - Always respond in ${uiLang} for explanations
+   - Use simple ${targetLang} vocabulary appropriate for learners
+   - Include occasional cultural notes when relevant`;
+
+   const contents = conversationHistory.map(m => ({
+     role: m.role as "user" | "model",
+     parts: [{ text: m.text }]
+   }));
+
+   contents.push({ role: "user", parts: [{ text: "(continue the conversation)" }] });
+
+   const result = await genAI.models.generateContent({
+     model,
+     contents,
+     config: {
+       systemInstruction: { parts: [{ text: systemInstruction }] }
+     }
+   });
+
+   return { text: result.text || '' };
+ }
 
 export interface InteractiveStoryScene {
    sceneText: string;
@@ -1285,7 +1273,7 @@ export async function fetchStoryScene(
    history: { scene: string; choice: string }[],
    difficulty: 'easy' | 'medium' | 'hard' | number,
    special?: { C: number; I: number; A: number }
-): Promise<InteractiveStoryScene> {
+ ): Promise<InteractiveStoryScene> {
    const genAI = checkPrerequisites();
    const model = "gemini-3-flash-preview";
 
@@ -1327,16 +1315,6 @@ export async function fetchStoryScene(
      };
    }
  }
-
-export interface ConversationResponse {
-   text: string;
-   feedback?: string;
-   correction?: string;
-   suggestions?: string[];
-   culturalNote?: string;
-   suggestedNextSteps?: string[];
-   translation?: string;
-}
 
 export interface GrammarAnalysis {
    hasErrors: boolean;
