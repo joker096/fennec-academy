@@ -8,6 +8,8 @@ interface CorrectExplanationPanelProps {
   isFetchingCorrectExplanation: boolean;
   correctExplanation: string | null;
   onBuyPremium: () => void;
+  uiLang?: string;
+  targetLang?: string;
 }
 
 export default function CorrectExplanationPanel({

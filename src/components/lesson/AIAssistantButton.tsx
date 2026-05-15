@@ -15,6 +15,13 @@ interface AIAssistantButtonProps {
   onStartListening: () => void;
   onStopListening: () => void;
   onFetchAIHints: () => void;
+  uiLang?: string;
+  targetLang?: string;
+  isPremium?: boolean;
+  isOnline?: boolean;
+  special?: Record<string, number>;
+  equippedPerks?: string[];
+  health?: number;
 }
 
 export default function AIAssistantButton({

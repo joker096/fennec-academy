@@ -1,13 +1,17 @@
-import { motion } from 'motion/react';
-import { AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { AlertCircle, CheckCircle2, Sparkles as SparklesIcon } from 'lucide-react';
 
 interface LessonFooterProps {
   t: Record<string, string>;
   status: 'idle' | 'correct' | 'incorrect';
   currentQuestionType: string;
+  currentQuestion: any;
   typedAnswer: string;
   isInputValid: boolean;
   onCheck: () => void;
+  uiLang?: string;
+  targetLang?: string;
+  isPremium?: boolean;
 }
 
 export default function LessonFooter({
@@ -21,7 +25,7 @@ export default function LessonFooter({
             {status === 'correct' && (
               <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 font-bold text-xl">
                 <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center"><CheckCircle2 className="w-6 h-6" /></div>
-                <span className="flex items-center gap-2">{t.access_granted || 'Correct!'}{' '}<Sparkles className="w-5 h-5 text-amber-400 animate-pulse" /></span>
+                <span className="flex items-center gap-2">{t.access_granted || 'Correct!'}{' '}<SparklesIcon className="w-5 h-5 text-amber-400 animate-pulse" /></span>
               </div>
             )}
             {status === 'incorrect' && (

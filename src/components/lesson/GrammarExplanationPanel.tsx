@@ -18,6 +18,8 @@ interface GrammarExplanationPanelProps {
   isFetchingGrammar: boolean;
   onFetchGrammar: () => void;
   onBuyPremium: () => void;
+  uiLang?: string;
+  targetLang?: string;
 }
 
 export default function GrammarExplanationPanel({

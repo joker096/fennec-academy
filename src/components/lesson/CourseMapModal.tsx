@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Map } from 'lucide-react';
+import { X, Map, CheckCircle2, Crosshair } from 'lucide-react';
 
 function CourseMapLockIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -109,5 +109,3 @@ export default function CourseMapModal({
     </AnimatePresence>
   );
 }
-
-import { X, Map, CheckCircle2, Crosshair } from 'lucide-react';

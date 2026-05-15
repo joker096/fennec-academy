@@ -15,6 +15,12 @@ interface OptionButtonsProps {
     word: any;
   };
   onSelectOption: (opt: string) => void;
+  uiLang?: string;
+  targetLang?: string;
+  isPremium?: boolean;
+  isOnline?: boolean;
+  special?: Record<string, number>;
+  equippedPerks?: string[];
 }
 
 export default function OptionButtons({

@@ -9,6 +9,8 @@ interface DeepDivePanelProps {
   deepDive: any;
   onFetchDeepDive: () => void;
   onBuyPremium: () => void;
+  uiLang?: string;
+  targetLang?: string;
 }
 
 export default function DeepDivePanel({

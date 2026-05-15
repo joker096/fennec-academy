@@ -13,6 +13,8 @@ interface ContextualExamplesPanelProps {
   savedExamples: any[];
   onSaveExample: (word: string, example: any, lang: string) => void;
   onBuyPremium: () => void;
+  uiLang?: string;
+  targetLang?: string;
 }
 
 export default function ContextualExamplesPanel({
