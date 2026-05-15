@@ -1,0 +1,23 @@
+{
+  "name": "Fennec Academy",
+  "short_name": "Fennec",
+  "description": "Language Survival - Master new languages in a gamified campus environment with AI mentors and advanced simulation.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#18181b",
+  "theme_color": "#18181b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "games"],
+  "lang": "ru",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+}

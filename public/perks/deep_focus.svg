@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <rect width="400" height="400" fill="#dd6b20" />
+  <rect width="380" height="380" x="10" y="10" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="10,10" opacity="0.5" />
+  <circle cx="200" cy="180" r="100" fill="#fff" opacity="0.2" />
+  <svg x="100" y="80" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+  </svg>
+  <text x="200" y="320" font-family="sans-serif" font-size="40" font-weight="bold" fill="#fff" text-anchor="middle" dominant-baseline="middle">
+    Concentrated Fire
+  </text>
+</svg>

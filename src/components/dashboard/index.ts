@@ -1,0 +1,19 @@
+// Dashboard components barrel export
+export { CourseMap } from './CourseMap';
+export { DiagnosticsGrid } from './DiagnosticsGrid';
+export { SkillsPerks } from './SkillsPerks';
+export { QuickSRS } from './QuickSRS';
+export { MasteryLab } from './MasteryLab';
+export { TasksSection } from './TasksSection';
+export { TaskItem } from './TaskItem';
+export { TrainingSims } from './TrainingSims';
+export { ChatHistory } from './ChatHistory';
+export { MiniLessons } from './MiniLessons';
+export { VideoLessons } from './VideoLessons';
+export { QuestLog } from './QuestLog';
+export { UserProfileBar } from './UserProfileBar';
+export { StatsCards } from './StatsCards';
+export { SpecialStats } from './SpecialStats';
+export { AIHelper } from './AIHelper';
+export { DailyQuestsSection } from './DailyQuestsSection';
+export { TaskFormModal } from './TaskFormModal';

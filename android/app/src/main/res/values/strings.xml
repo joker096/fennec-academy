@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Fennec</string>
+    <string name="title_activity_main">Fennec</string>
+    <string name="package_name">com.fennec.academy</string>
+    <string name="custom_url_scheme">com.fennec.academy</string>
+</resources>
