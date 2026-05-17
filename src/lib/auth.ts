@@ -8,7 +8,7 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: 'com.fennec.academy://callback',
+      redirectTo: 'https://joker096.github.io/fennec-reset-password/',
       queryParams: { access_type: 'offline', prompt: 'consent' },
     },
   });
