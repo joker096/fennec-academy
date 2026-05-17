@@ -20,14 +20,14 @@ export function mapSupabaseUser(user: User | null): {
   };
 }
 
-export async function signUpWithEmail(email: string, password: string, captchaToken?: string) {
-  const { data, error } = await supabase.auth.signUp({ email, password }, { captchaToken });
+export async function signUpWithEmail(email: string, password: string) {
+  const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) throw error;
   return { success: true, user: mapSupabaseUser(data.user) };
 }
 
-export async function signInWithEmail(email: string, password: string, captchaToken?: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password }, { captchaToken });
+export async function signInWithEmail(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw error;
   return { success: true, user: mapSupabaseUser(data.user) };
 }
@@ -45,11 +45,11 @@ export async function handleAuthState() {
 }
 
 // Send OTP code to email for password reset
-export async function sendResetOTP(email: string, captchaToken?: string) {
+export async function sendResetOTP(email: string) {
   console.log('[Auth] Sending reset OTP to:', email);
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: false, captchaToken },
+    options: { shouldCreateUser: false },
   });
   if (error) {
     console.error('[Auth] sendResetOTP error:', error.message);

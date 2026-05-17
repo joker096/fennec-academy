@@ -5,7 +5,7 @@ import { UI_TRANSLATIONS } from '../data/translations';
 import SEO from '../components/SEO';
 import { signInWithEmail, signUpWithEmail, handleAuthState, sendResetOTP, verifyResetOTP, updatePassword } from '../lib/auth';
 import { motion, AnimatePresence } from 'motion/react';
-import Captcha from '../components/Captcha';
+
 
 export default function Login() {
   const { uiLang, crtMode, setUser, setUiLang } = useStore();
@@ -16,7 +16,6 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [otpCode, setOtpCode] = useState('');
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +33,7 @@ export default function Login() {
       }
       setIsLoading(true);
       try {
-        await sendResetOTP(email, captchaToken || undefined);
+        await sendResetOTP(email);
         setMode('otp');
         setSuccess(t.reset_otp_sent || 'We sent a 6-digit code to your email. Enter it below to reset your password.');
       } catch (error: any) {
@@ -111,7 +110,7 @@ export default function Login() {
     setIsLoading(true);
     try {
       if (mode === 'login') {
-        await signInWithEmail(email, password, captchaToken || undefined);
+        await signInWithEmail(email, password);
         const authResult = await handleAuthState();
         if (authResult.user) {
           setUser(authResult.user);
@@ -119,7 +118,7 @@ export default function Login() {
           setError('Login succeeded but session not found. Please try again.');
         }
       } else {
-        const result = await signUpWithEmail(email, password, captchaToken || undefined);
+        const result = await signUpWithEmail(email, password);
         if (result.success) {
           const authResult = await handleAuthState();
           if (authResult.user) {
@@ -353,7 +352,6 @@ export default function Login() {
               )}
             </div>
 
-            <Captcha onToken={setCaptchaToken} action={mode === 'new_password' ? 'reset' : mode === 'login' ? 'login' : 'register'} />
             <button
               type="submit"
               disabled={isLoading}
