@@ -3,9 +3,6 @@ import type { User } from '@supabase/supabase-js';
 
 export { signOutSupabase as signOut };
 
-/**
- * Converts Supabase User to Firebase-compatible user shape
- */
 export function mapSupabaseUser(user: User | null): {
   uid: string;
   displayName: string | null;
@@ -24,19 +21,13 @@ export function mapSupabaseUser(user: User | null): {
 }
 
 export async function signUpWithEmail(email: string, password: string) {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
+  const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) throw error;
   return { success: true, user: mapSupabaseUser(data.user) };
 }
 
 export async function signInWithEmail(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw error;
   return { success: true, user: mapSupabaseUser(data.user) };
 }
@@ -53,23 +44,50 @@ export async function handleAuthState() {
   }
 }
 
-export async function resetPassword(email: string) {
-  console.log('[Auth] Requesting password reset for:', email);
-  // In Capacitor WebView window.location.origin can be 'file://' or 'capacitor://localhost'
-  // which Supabase will reject as redirect URL. Use a hosted standalone reset page instead.
-  const redirectTo = 'https://joker096.github.io/fennec-reset-password/';
-  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+// Send OTP code to email for password reset
+export async function sendResetOTP(email: string) {
+  console.log('[Auth] Sending reset OTP to:', email);
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: false },
+  });
   if (error) {
-    console.error('[Auth] resetPassword error:', error.message);
+    console.error('[Auth] sendResetOTP error:', error.message);
     throw error;
   }
-  console.log('[Auth] resetPassword success');
+  console.log('[Auth] Reset OTP sent');
   return { success: true };
 }
 
-export function subscribeToAuthChanges(
-  callback: (user: any | null) => void
-) {
+// Verify OTP and set session, then update password
+export async function verifyResetOTP(email: string, token: string) {
+  console.log('[Auth] Verifying reset OTP for:', email);
+  const { data, error } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: 'magiclink',
+  });
+  if (error) {
+    console.error('[Auth] verifyResetOTP error:', error.message);
+    throw error;
+  }
+  console.log('[Auth] OTP verified, session established');
+  return { success: true, user: mapSupabaseUser(data.user) };
+}
+
+// Update password after session is active
+export async function updatePassword(newPassword: string) {
+  console.log('[Auth] Updating password');
+  const { data, error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) {
+    console.error('[Auth] updatePassword error:', error.message);
+    throw error;
+  }
+  console.log('[Auth] Password updated');
+  return { success: true, user: mapSupabaseUser(data.user) };
+}
+
+export function subscribeToAuthChanges(callback: (user: any | null) => void) {
   const { data: { subscription } } = onAuthStateChange((_event, session) => {
     callback(mapSupabaseUser(session?.user || null));
   });

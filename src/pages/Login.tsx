@@ -3,17 +3,18 @@ import { Shield, Sparkles, AlertCircle, Loader2, Eye, EyeOff, LogIn, UserPlus } 
 import { useStore } from '../store/useStore';
 import { UI_TRANSLATIONS } from '../data/translations';
 import SEO from '../components/SEO';
-import { signInWithEmail, signUpWithEmail, handleAuthState, resetPassword } from '../lib/auth';
+import { signInWithEmail, signUpWithEmail, handleAuthState, sendResetOTP, verifyResetOTP, updatePassword } from '../lib/auth';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function Login() {
   const { uiLang, crtMode, setUser, setUiLang } = useStore();
   const t = UI_TRANSLATIONS[uiLang as keyof typeof UI_TRANSLATIONS] || UI_TRANSLATIONS['en'];
   
-  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'otp' | 'new_password'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [otpCode, setOtpCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +24,7 @@ export default function Login() {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-    
+
     if (mode === 'forgot') {
       if (!email.trim()) {
         setError(t.fill_all_fields || 'Please fill in all fields');
@@ -31,10 +32,58 @@ export default function Login() {
       }
       setIsLoading(true);
       try {
-        await resetPassword(email);
-        setSuccess(t.reset_password_sent || 'Password reset link sent to your email');
+        await sendResetOTP(email);
+        setMode('otp');
+        setSuccess(t.reset_otp_sent || 'We sent a 6-digit code to your email. Enter it below to reset your password.');
       } catch (error: any) {
-        setError(error?.message || 'Failed to send reset link');
+        setError(error?.message || 'Failed to send reset code');
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    if (mode === 'otp') {
+      if (!otpCode.trim()) {
+        setError(t.otp_placeholder || 'Enter the code from your email');
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const result = await verifyResetOTP(email, otpCode.trim());
+        if (result.success) {
+          setMode('new_password');
+          setSuccess(null);
+          setError(null);
+        }
+      } catch (error: any) {
+        setError(error?.message || t.wrong_otp || 'Invalid code. Please check your email and try again.');
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    if (mode === 'new_password') {
+      if (!password.trim() || password.length < 6) {
+        setError(t.password_min_length || 'Password must be at least 6 characters');
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError(t.passwords_not_match || 'Passwords do not match');
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const result = await updatePassword(password);
+        if (result.user) {
+          setUser(result.user);
+        } else {
+          setSuccess(t.password_changed || 'Password changed! You can now use your new password.');
+          setTimeout(() => setMode('login'), 2000);
+        }
+      } catch (error: any) {
+        setError(error?.message || 'Failed to update password');
       } finally {
         setIsLoading(false);
       }
@@ -140,7 +189,7 @@ export default function Login() {
           </div>
           
           {/* Mode Toggle */}
-          {mode !== 'forgot' && (
+          {(mode === 'login' || mode === 'register') && (
             <div className="flex bg-slate-800/50 rounded-xl p-1 mb-8">
               <button
                 onClick={() => { setMode('login'); setError(null); setSuccess(null); }}
@@ -193,23 +242,80 @@ export default function Login() {
               )}
             </AnimatePresence>
 
-            {mode === 'forgot' && (
+            {(mode === 'forgot') && (
               <h3 className="text-lg font-bold text-white mb-2">
                 {t.forgot_password || 'Reset Password'}
               </h3>
             )}
+            {mode === 'otp' && (
+              <h3 className="text-lg font-bold text-white mb-2">
+                {t.reset_password || 'Reset Password'}
+              </h3>
+            )}
+            {mode === 'new_password' && (
+              <h3 className="text-lg font-bold text-white mb-2">
+                {t.enter_new_password || 'Enter your new password'}
+              </h3>
+            )}
+            
             <div className="space-y-3">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t.email_placeholder || 'Email address'}
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                autoComplete="email"
-                disabled={isLoading}
-              />
+              {(mode === 'forgot' || mode === 'otp') && (
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t.email_placeholder || 'Email address'}
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                  autoComplete="email"
+                  disabled={isLoading || mode === 'otp'}
+                />
+              )}
+
+              {mode === 'otp' && (
+                <input
+                  type="text"
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder={t.otp_placeholder || 'Enter 6-digit code'}
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-center text-2xl tracking-[0.5em] font-mono"
+                  disabled={isLoading}
+                  maxLength={6}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                />
+              )}
+
+              {mode === 'new_password' && (
+                <>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder={t.new_password_placeholder || 'New password'}
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all pr-12"
+                      disabled={isLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder={t.confirm_password_placeholder || 'Confirm new password'}
+                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                    disabled={isLoading}
+                  />
+                </>
+              )}
               
-              {mode !== 'forgot' && (
+              {(mode === 'login' || mode === 'register') && (
                 <>
                   <div className="relative">
                     <input
@@ -253,9 +359,11 @@ export default function Login() {
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : mode === 'forgot' ? (
-                <>
-                  {t.send_reset_link || 'Send Reset Link'}
-                </>
+                t.send_reset_link || 'Send Reset Link'
+              ) : mode === 'otp' ? (
+                t.verify_code || 'Verify Code'
+              ) : mode === 'new_password' ? (
+                t.update_password || 'Update Password'
               ) : mode === 'login' ? (
                 <>
                   <LogIn className="w-4 h-4" />
@@ -279,6 +387,33 @@ export default function Login() {
               </button>
             )}
             {mode === 'forgot' && (
+              <button
+                type="button"
+                onClick={() => { setMode('login'); setError(null); setSuccess(null); }}
+                className="w-full text-center text-sm text-slate-500 hover:text-primary transition-colors mt-2"
+              >
+                {t.back_to_login || 'Back to Sign In'}
+              </button>
+            )}
+            {mode === 'otp' && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => { setMode('forgot'); setError(null); setSuccess(null); }}
+                  className="w-full text-center text-sm text-slate-500 hover:text-primary transition-colors mt-2"
+                >
+                  {t.resend_otp || 'Resend code'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setMode('login'); setError(null); setSuccess(null); }}
+                  className="w-full text-center text-sm text-slate-500 hover:text-primary transition-colors"
+                >
+                  {t.back_to_login || 'Back to Sign In'}
+                </button>
+              </>
+            )}
+            {mode === 'new_password' && (
               <button
                 type="button"
                 onClick={() => { setMode('login'); setError(null); setSuccess(null); }}
