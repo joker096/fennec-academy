@@ -44,47 +44,18 @@ export async function handleAuthState() {
   }
 }
 
-// Send OTP code to email for password reset
-export async function sendResetOTP(email: string) {
-  console.log('[Auth] Sending reset OTP to:', email);
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { shouldCreateUser: false },
+// Send password reset link
+export async function resetPassword(email: string) {
+  console.log('[Auth] Sending reset link to:', email);
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://joker096.github.io/fennec-reset-password/',
   });
   if (error) {
-    console.error('[Auth] sendResetOTP error:', error.message);
+    console.error('[Auth] resetPassword error:', error.message);
     throw error;
   }
-  console.log('[Auth] Reset OTP sent');
+  console.log('[Auth] Reset link sent');
   return { success: true };
-}
-
-// Verify OTP and set session, then update password
-export async function verifyResetOTP(email: string, token: string) {
-  console.log('[Auth] Verifying reset OTP for:', email);
-  const { data, error } = await supabase.auth.verifyOtp({
-    email,
-    token,
-    type: 'magiclink',
-  });
-  if (error) {
-    console.error('[Auth] verifyResetOTP error:', error.message);
-    throw error;
-  }
-  console.log('[Auth] OTP verified, session established');
-  return { success: true, user: mapSupabaseUser(data.user) };
-}
-
-// Update password after session is active
-export async function updatePassword(newPassword: string) {
-  console.log('[Auth] Updating password');
-  const { data, error } = await supabase.auth.updateUser({ password: newPassword });
-  if (error) {
-    console.error('[Auth] updatePassword error:', error.message);
-    throw error;
-  }
-  console.log('[Auth] Password updated');
-  return { success: true, user: mapSupabaseUser(data.user) };
 }
 
 export function subscribeToAuthChanges(callback: (user: any | null) => void) {
