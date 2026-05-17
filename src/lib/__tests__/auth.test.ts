@@ -99,10 +99,10 @@ describe('auth helpers', () => {
       const result = await signUpWithEmail('new@example.com', 'password123');
       expect(result.success).toBe(true);
       expect(result.user?.uid).toBe('new-user');
-      expect(mockedSignUp).toHaveBeenCalledWith({
-        email: 'new@example.com',
-        password: 'password123',
-      });
+      expect(mockedSignUp).toHaveBeenCalledWith(
+        { email: 'new@example.com', password: 'password123' },
+        { captchaToken: undefined }
+      );
     });
 
     it('throws on error', async () => {
@@ -129,10 +129,10 @@ describe('auth helpers', () => {
       const result = await signInWithEmail('test@example.com', 'password123');
       expect(result.success).toBe(true);
       expect(result.user?.uid).toBe('user-789');
-      expect(mockedSignIn).toHaveBeenCalledWith({
-        email: 'test@example.com',
-        password: 'password123',
-      });
+      expect(mockedSignIn).toHaveBeenCalledWith(
+        { email: 'test@example.com', password: 'password123' },
+        { captchaToken: undefined }
+      );
     });
 
     it('throws on invalid credentials', async () => {

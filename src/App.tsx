@@ -27,6 +27,7 @@ import WeatherEffects from './components/WeatherEffects';
 import WeatherBackground from './components/WeatherBackground';
 import { PremiumGuard } from './components/PremiumGuard';
 import { CognitiveStatus } from './components/CognitiveStatus';
+import Captcha from './components/Captcha';
 
 import Character from './pages/Character';
 // Lazy load pages
@@ -764,6 +765,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [otpCode, setOtpCode] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -785,7 +787,7 @@ function Login() {
       }
       setIsLoading(true);
       try {
-        await sendResetOTP(email);
+        await sendResetOTP(email, captchaToken || undefined);
         setMode('otp');
         setSuccess(t.reset_otp_sent || 'We sent a 6-digit code to your email. Enter it below to reset your password.');
       } catch (error: any) {
@@ -862,7 +864,7 @@ function Login() {
     setIsLoading(true);
     try {
       if (mode === 'login') {
-        await signInWithEmail(email, password);
+        await signInWithEmail(email, password, captchaToken || undefined);
         const authResult = await handleAuthState();
         if (authResult.user) {
           await setUser(authResult.user);
@@ -870,7 +872,7 @@ function Login() {
           setError('Login succeeded but session not found. Please try again.');
         }
       } else {
-        const result = await signUpWithEmail(email, password);
+        const result = await signUpWithEmail(email, password, captchaToken || undefined);
         if (result.success) {
           const authResult = await handleAuthState();
           if (authResult.user) {
@@ -1082,6 +1084,7 @@ function Login() {
             </>
           )}
 
+          <Captcha onToken={setCaptchaToken} action={mode === 'new_password' ? 'reset' : mode === 'login' ? 'login' : 'register'} />
           <button
             type="submit"
             disabled={isLoading}
