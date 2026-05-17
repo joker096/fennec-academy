@@ -7,6 +7,7 @@ import { Home, BookOpen, MapPin, MessageSquare, Layers, Shield, Globe, Activity,
 import { App as CapacitorApp } from '@capacitor/app';
 import { db } from './firebase';
 import { handleAuthState, subscribeToAuthChanges, signOut, signInWithEmail, signUpWithEmail, resetPassword, signInWithGoogle } from './lib/auth';
+import { supabase } from './lib/supabase';
 import { doc, getDoc } from 'firebase/firestore';
 import { LANGUAGES, WORDS_BY_LANG } from './data/gameData';
 import { UI_TRANSLATIONS } from './data/translations';
@@ -990,6 +991,27 @@ export default function AppWrapper() {
         }
       }).then(listener => {
         appStateListener = listener;
+      });
+
+      // Handle deep link from Google OAuth redirect (fennec://callback#...)
+      CapacitorApp.addListener('appUrlOpen', async (data: any) => {
+        console.log('[App] Deep link received:', data?.url);
+        if (data?.url?.includes('#access_token=')) {
+          const hash = data.url.split('#')[1];
+          const params = new URLSearchParams(hash);
+          const access_token = params.get('access_token');
+          const refresh_token = params.get('refresh_token');
+          if (access_token) {
+            const { error } = await supabase.auth.setSession({
+              access_token,
+              refresh_token: refresh_token || '',
+            });
+            if (!error) {
+              const authResult = await handleAuthState();
+              if (authResult.user) await setUser(authResult.user);
+            }
+          }
+        }
       });
     }
 

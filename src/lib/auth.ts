@@ -3,40 +3,21 @@ import type { User } from '@supabase/supabase-js';
 
 export { signOutSupabase as signOut };
 
-// Try native Google Sign-In via Capacitor plugin, fallback to OAuth
+// Google Sign-In via system browser (Capacitor Browser plugin)
 export async function signInWithGoogle() {
-  try {
-    // Try @capacitor-firebase/authentication plugin (native)
-    const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
-    const result = await FirebaseAuthentication.signInWithGoogle();
-    
-    if (result.credential?.idToken) {
-      // Sign in to Supabase with Google ID token
-      const { data, error } = await supabase.auth.signInWithIdToken({
-        provider: 'google',
-        token: result.credential.idToken,
-      });
-      if (error) throw error;
-      return { success: true, user: mapSupabaseUser(data.user) };
-    }
-    throw new Error('No ID token from Google');
-  } catch (e: any) {
-    // If plugin not available, try web OAuth
-    if (e?.message?.includes('not implemented') || e?.message?.includes('capacitor')) {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin + '/auth/callback',
-          queryParams: { access_type: 'offline', prompt: 'consent' },
-        },
-      });
-      if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    }
-    throw e;
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: 'fennec://callback',
+      queryParams: { access_type: 'offline', prompt: 'consent' },
+    },
+  });
+  if (error) throw error;
+  if (data?.url) {
+    const { Browser } = await import('@capacitor/browser');
+    await Browser.open({ url: data.url, presentationStyle: 'fullscreen' });
   }
+  return null; // session set by appUrlOpen
 }
 
 export function mapSupabaseUser(user: User | null): {
