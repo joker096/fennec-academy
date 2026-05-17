@@ -1,7 +1,7 @@
 {
   "name": "fennec-academy",
   "private": true,
-  "version": "1.0.16",
+  "version": "1.0.22",
   "type": "module",
   "scripts": {
     "download-audio": "tsx scripts/downloadAllAudio.ts",
