@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Map, CheckCircle2, Crosshair } from 'lucide-react';
+import { X as XIcon, Map, CheckCircle2, Crosshair } from 'lucide-react';
 
 function CourseMapLockIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -52,7 +52,7 @@ export default function CourseMapModal({
                 <h2 className="font-bold text-lg">{t.course_map}</h2>
               </div>
               <button onClick={onHideCourseMap} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
-                <X className="w-5 h-5" />
+                <XIcon className="w-5 h-5" />
               </button>
             </div>
 

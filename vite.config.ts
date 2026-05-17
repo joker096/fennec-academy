@@ -23,24 +23,24 @@ export default defineConfig(({mode}) => {
           theme_color: '#18181b',
           background_color: '#18181b',
           display: 'standalone',
-          icons: [
-            {
-              src: 'pwa-192x192.png',
-              sizes: '192x192',
-              type: 'image/png'
-            },
-            {
-              src: 'pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png'
-            },
-            {
-              src: 'pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any maskable'
-            }
-          ],
+icons: [
+             {
+               src: 'pwa-192x192.png',
+               sizes: '192x192',
+               type: 'image/png'
+             },
+             {
+               src: 'pwa-512x512.png',
+               sizes: '512x512',
+               type: 'image/png'
+             },
+             {
+               src: 'maskable-icon-512x512.png',
+               sizes: '512x512',
+               type: 'image/png',
+               purpose: 'any maskable'
+             }
+           ],
           // @ts-ignore - widgets is a valid property for PWA manifest but not yet in types
           widgets: [
             {

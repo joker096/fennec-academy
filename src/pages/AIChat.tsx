@@ -10,6 +10,7 @@ import SEO from '../components/SEO';
 import { Bot, Cpu, Database, Activity, Send, RefreshCw, User, Mic, MicOff, Volume2, Lock, Sparkles, Keyboard, Loader2, History, Plus, Trash2, MessageSquare, ChevronLeft, Menu, CloudOff } from 'lucide-react';
 import { AdBanner } from '../components/AdBanner';
 import { VirtualKeyboard } from '../components/VirtualKeyboard';
+
 import { TerminalLoader } from '../components/TerminalLoader';
 import { transcribeAudio } from '../services/geminiService';
 import { audioService, SoundEffect } from '../services/audioService';

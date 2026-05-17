@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import { BrowserRouter, Routes, Route, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useStore } from './store/useStore';
-import { Home, BookOpen, MapPin, MessageSquare, Layers, Shield, Globe, Activity, Heart, Sun, Moon, LogOut, Menu, ArrowUp, Zap, Star, Coins, Flame, Award, Settings, User, ChevronDown, ChevronRight, WifiOff, LogIn, Trophy, Terminal, AlertCircle, ShieldAlert, Mic, CloudRain, Wind, Cloud, Calendar, Utensils, Droplets, Syringe, ShieldCheck, Cpu, Video, Sparkles, Monitor, Palette, RefreshCcw, CloudOff, Cloud as CloudIcon, Download, CheckCircle2, HelpCircle } from 'lucide-react';
-import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged, db } from './firebase';
+import { Home, BookOpen, MapPin, MessageSquare, Layers, Shield, Globe, Activity, Heart, Sun, Moon, LogOut, Menu, ArrowUp, Zap, Star, Coins, Flame, Award, Settings, User, ChevronDown, ChevronRight, WifiOff, LogIn, Trophy, Terminal, AlertCircle, ShieldAlert, Mic, CloudRain, Wind, Cloud, Calendar, Utensils, Droplets, Syringe, ShieldCheck, Cpu, Video, Sparkles, Monitor, Palette, RefreshCcw, CloudOff, Cloud as CloudIcon, Download, CheckCircle2, HelpCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { App as CapacitorApp } from '@capacitor/app';
+import { db } from './firebase';
+import { handleAuthState, subscribeToAuthChanges, signOut, signInWithEmail, signUpWithEmail, resetPassword } from './lib/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { LANGUAGES, WORDS_BY_LANG } from './data/gameData';
 import { UI_TRANSLATIONS } from './data/translations';
@@ -52,6 +54,7 @@ const Quests = React.lazy(() => import('./pages/Quests'));
 const VocabularyBank = React.lazy(() => import('./pages/VocabularyBank'));
 const RepairTerminal = React.lazy(() => import('./pages/RepairTerminal'));
 const Factions = React.lazy(() => import('./pages/Factions'));
+const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
 
 const queryClient = new QueryClient();
 
@@ -572,7 +575,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
             
             <button 
-              onClick={() => signOut(auth)}
+              onClick={() => signOut()}
               className="p-2.5 bg-slate-50 dark:bg-slate-900 rounded border-2 border-slate-200 dark:border-slate-800 text-slate-400 hover:text-rose-500 hover:border-rose-500/30 transition-all shadow-sm"
               title="Logout"
             >
@@ -748,6 +751,7 @@ function AnimatedRoutes() {
           <Route path="/repair-terminal" element={<PageWrapper><RepairTerminal /></PageWrapper>} />
           <Route path="/factions" element={<PageWrapper><Factions /></PageWrapper>} />
           <Route path="/voice-calibration" element={<PageWrapper><PremiumGuard featureName="Voice Practice" description={t.premium_voice_desc}><VoicePractice /></PremiumGuard></PageWrapper>} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </AnimatePresence>
     </Suspense>
@@ -755,15 +759,87 @@ function AnimatedRoutes() {
 }
 
 function Login() {
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const t = useT();
+  const setUser = useStore(state => state.setUser);
+  const uiLang = useStore(state => state.uiLang);
+  const setUiLang = useStore(state => state.setUiLang);
 
-  const handleLogin = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    
+    if (mode === 'forgot') {
+      if (!email.trim()) {
+        setError(t.fill_all_fields || 'Please fill in all fields');
+        return;
+      }
+      setIsLoading(true);
+      console.log('[Login] Submitting forgot password for:', email);
+      try {
+        await resetPassword(email);
+        console.log('[Login] Forgot password success');
+        setSuccess(t.reset_password_sent || 'Password reset link sent to your email');
+      } catch (error: any) {
+        console.error('[Login] Forgot password error:', error);
+        setError(error?.message || 'Failed to send reset link');
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+    
+    if (!email.trim() || !password.trim()) {
+      setError(t.fill_all_fields || 'Please fill in all fields');
+      return;
+    }
+    
+    if (mode === 'register') {
+      if (password !== confirmPassword) {
+        setError(t.passwords_not_match || 'Passwords do not match');
+        return;
+      }
+      if (password.length < 6) {
+        setError(t.password_min_length || 'Password must be at least 6 characters');
+        return;
+      }
+    }
+
     setIsLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error('Login failed:', error);
+      if (mode === 'login') {
+        await signInWithEmail(email, password);
+        // In WebView, onAuthStateChange may not fire reliably.
+        // Explicitly check session and set user.
+        const authResult = await handleAuthState();
+        if (authResult.user) {
+          await setUser(authResult.user);
+        } else {
+          setError('Login succeeded but session not found. Please try again.');
+        }
+      } else {
+        const result = await signUpWithEmail(email, password);
+        if (result.success) {
+          // After sign-up, immediately check session and log user in
+          const authResult = await handleAuthState();
+          if (authResult.user) {
+            await setUser(authResult.user);
+          } else {
+            setSuccess(t.check_email_confirm || 'Account created! Please check your email to confirm.');
+          }
+        }
+      }
+    } catch (error: any) {
+      const msg = error?.message || 'Authentication failed';
+      setError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -785,26 +861,158 @@ function Login() {
         </div>
         
         <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{t.login_title}</h1>
-        <p className="text-sm font-medium text-slate-500 mb-10 leading-relaxed max-w-xs mx-auto">
+        <p className="text-sm font-medium text-slate-500 mb-6 leading-relaxed max-w-xs mx-auto">
           {t.login_subtitle || t.login_desc || 'Welcome to the academy. Please verify your credentials to continue.'}
         </p>
 
-        <button
-          onClick={handleLogin}
-          disabled={isLoading}
-          className="w-full bg-slate-900 border-2 border-slate-900 dark:bg-white dark:border-white text-white dark:text-slate-900 py-4 font-bold rounded-2xl flex items-center justify-center gap-4 hover:bg-slate-800 dark:hover:bg-slate-100 transition-all active:scale-[0.98] disabled:opacity-50 relative group overflow-hidden"
-        >
-          {isLoading ? (
-            <div className="w-5 h-5 border-2 border-current border-t-transparent animate-spin" />
-          ) : (
+        {/* Language Switcher */}
+        <div className="flex justify-center gap-2 mb-6">
+          {(['en', 'ru'] as const).map((lang) => (
+            <button
+              key={lang}
+              type="button"
+              onClick={() => setUiLang(lang)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all border ${
+                uiLang === lang
+                  ? 'bg-primary text-white border-primary shadow-md'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-primary/50'
+              }`}
+            >
+              {lang === 'en' ? '🇬🇧 EN' : '🇷🇺 RU'}
+            </button>
+          ))}
+        </div>
+
+        {/* Mode Toggle */}
+        {mode !== 'forgot' && (
+          <div className="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 mb-8">
+            <button
+              onClick={() => { setMode('login'); setError(null); setSuccess(null); }}
+              className={`flex-1 py-3 rounded-lg font-bold text-sm uppercase tracking-wider transition-all ${
+                mode === 'login' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-md' : 'text-slate-400'
+              }`}
+            >
+              {t.sign_in || 'Sign In'}
+            </button>
+            <button
+              onClick={() => { setMode('register'); setError(null); setSuccess(null); }}
+              className={`flex-1 py-3 rounded-lg font-bold text-sm uppercase tracking-wider transition-all ${
+                mode === 'register' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-md' : 'text-slate-400'
+              }`}
+            >
+              {t.register || 'Register'}
+            </button>
+          </div>
+        )}
+
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3 text-left"
+            >
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-red-200 leading-relaxed">{error}</div>
+            </motion.div>
+          )}
+          {success && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-6 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 flex items-start gap-3 text-left"
+            >
+              <Shield className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-emerald-200 leading-relaxed">{success}</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {mode === 'forgot' && (
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+              {t.forgot_password || 'Reset Password'}
+            </h3>
+          )}
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={t.email_placeholder || 'Email address'}
+            className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+            disabled={isLoading}
+          />
+          
+          {mode !== 'forgot' && (
             <>
-              <div className="w-6 h-6 bg-white rounded-md p-1">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-full h-full object-contain" />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={t.password_placeholder || 'Password'}
+                  className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all pr-12"
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:hover:text-white transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
-              <span>{t.login_google || t.continue_with_google || 'Continue with Google'}</span>
+
+              {mode === 'register' && (
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder={t.confirm_password_placeholder || 'Confirm password'}
+                  className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                  disabled={isLoading}
+                />
+              )}
             </>
           )}
-        </button>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-slate-900 border-2 border-slate-900 dark:bg-white dark:border-white text-white dark:text-slate-900 py-4 font-bold rounded-2xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all active:scale-[0.98] disabled:opacity-50 mt-6"
+          >
+            {isLoading ? (
+              <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+            ) : mode === 'forgot' ? (
+              t.send_reset_link || 'Send Reset Link'
+            ) : mode === 'login' ? (
+              t.sign_in || 'Sign In'
+            ) : (
+              t.create_account || 'Create Account'
+            )}
+          </button>
+          
+          {mode === 'login' && (
+            <button
+              type="button"
+              onClick={() => { setMode('forgot'); setError(null); setSuccess(null); }}
+              className="w-full text-center text-sm text-slate-500 hover:text-primary transition-colors mt-2"
+            >
+              {t.forgot_password || 'Forgot password?'}
+            </button>
+          )}
+          {mode === 'forgot' && (
+            <button
+              type="button"
+              onClick={() => { setMode('login'); setError(null); setSuccess(null); }}
+              className="w-full text-center text-sm text-slate-500 hover:text-primary transition-colors mt-2"
+            >
+              {t.back_to_login || 'Back to Sign In'}
+            </button>
+          )}
+        </form>
 
         <div className="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800 relative z-10">
           <div className="flex items-center justify-center gap-2 text-xs font-semibold text-slate-400">
@@ -857,11 +1065,56 @@ export default function AppWrapper() {
   }, [checkNewDay]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      // setUser in store handles fetching existing doc or creating new one
-      await setUser(user);
-      setIsAuthLoading(false);
+    // Handle returning from OAuth redirect
+    (async () => {
+      try {
+        const authResult = await handleAuthState();
+        if (authResult.error) {
+          console.warn('[App] Auth state error:', authResult.error);
+        } else if (authResult.user) {
+          console.log('[App] User authenticated:', authResult.user.uid);
+          await setUser(authResult.user);
+        }
+      } catch (e) {
+        console.error('[App] Auth init error:', e);
+      } finally {
+        setIsAuthLoading(false);
+      }
+    })();
+
+    // Subscribe to auth state changes
+    const unsubscribe = subscribeToAuthChanges(async (user) => {
+      try {
+        await setUser(user);
+      } catch (e) {
+        console.error('[App] setUser error in auth subscription:', e);
+      } finally {
+        setIsAuthLoading(false);
+      }
     });
+
+    // When app returns from background (e.g. user closed browser after OAuth)
+    // check session again
+    let appStateListener: { remove: () => void } | null = null;
+    if (CapacitorApp && CapacitorApp.addListener) {
+      CapacitorApp.addListener('appStateChange', async ({ isActive }) => {
+        if (isActive) {
+          console.log('[App] App resumed, checking auth session...');
+          try {
+            const authResult = await handleAuthState();
+            if (authResult.user) {
+              await setUser(authResult.user);
+            }
+          } catch (e) {
+            console.error('[App] App resume auth error:', e);
+          } finally {
+            setIsAuthLoading(false);
+          }
+        }
+      }).then(listener => {
+        appStateListener = listener;
+      });
+    }
 
     // Fetch global settings
     const fetchSettings = async () => {
@@ -876,7 +1129,12 @@ export default function AppWrapper() {
     };
     fetchSettings();
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if (appStateListener) {
+        appStateListener.remove();
+      }
+    };
   }, [setUser, setGlobalSettings]);
 
   useEffect(() => {

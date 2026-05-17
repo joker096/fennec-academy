@@ -1,19 +1,19 @@
 
 export enum SoundEffect {
-  CLICK = '/audio/sfx/ui_click.mp3',
-  SUCCESS = '/audio/sfx/ui_success.mp3',
-  LEVEL_UP = '/audio/sfx/ui_levelup.mp3',
-  XP_GAIN = '/audio/sfx/ui_xp.mp3',
-  CARD_FLIP = '/audio/sfx/ui_card_flip.mp3',
-  NOTIFICATION = '/audio/sfx/ui_notification.mp3',
-  ERROR = '/audio/sfx/ui_error.mp3',
-  STIMPAK = '/audio/sfx/ui_stimpak.mp3',
-  EAT = '/audio/sfx/ui_eat.mp3',
-  DRINK = '/audio/sfx/ui_drink.mp3',
-  HURT = '/audio/sfx/ui_hurt.mp3',
-  COLLECT = '/audio/sfx/ui_collect.mp3',
-  CHECK = '/audio/sfx/ui_success.mp3',
-  REMOVE = '/audio/sfx/ui_click.mp3',
+  CLICK = '/audio/sfx/ui_click.wav',
+  SUCCESS = '/audio/sfx/ui_success.wav',
+  LEVEL_UP = '/audio/sfx/ui_levelup.wav',
+  XP_GAIN = '/audio/sfx/ui_xp.wav',
+  CARD_FLIP = '/audio/sfx/ui_card_flip.wav',
+  NOTIFICATION = '/audio/sfx/ui_notification.wav',
+  ERROR = '/audio/sfx/ui_error.wav',
+  STIMPAK = '/audio/sfx/ui_stimpak.wav',
+  EAT = '/audio/sfx/ui_eat.wav',
+  DRINK = '/audio/sfx/ui_drink.wav',
+  HURT = '/audio/sfx/ui_hurt.wav',
+  COLLECT = '/audio/sfx/ui_collect.wav',
+  CHECK = '/audio/sfx/ui_success.wav',
+  REMOVE = '/audio/sfx/ui_click.wav',
 }
 
 export enum AmbientSound {

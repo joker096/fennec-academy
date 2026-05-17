@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { Heart, Zap, CheckCircle2, XCircle, Sparkles } from 'lucide-react';
+import { Heart, Zap, CheckCircle2, XCircle, Sparkles, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { AdBanner } from '../AdBanner';
 
 interface LessonHeaderProps {
@@ -54,6 +55,8 @@ export default function LessonHeader({
   visualAid, isFetchingVisualAid, isOnline,
   onPlayPronunciation, onBuyPremium, onToggleVisualAid
 }: LessonHeaderProps) {
+  const navigate = useNavigate();
+
   return (
     <>
       {!isPremium && <div className="mb-6"><AdBanner /></div>}
@@ -103,6 +106,10 @@ export default function LessonHeader({
 
       <div className="sticky top-0 z-50 bg-white dark:bg-slate-950 border-b-2 border-slate-200 dark:border-slate-800 shadow-sm">
         <header className="h-20 flex items-center px-6 max-w-4xl mx-auto w-full gap-5">
+          <button onClick={() => navigate('/')} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all group">
+            <LogOut className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-rose-500 transition-colors" />
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 group-hover:text-rose-500 uppercase tracking-wider transition-colors">{t.exit || 'Exit'}</span>
+          </button>
           <div className="flex-1 px-2 space-y-2">
             <span className="text-[9px] font-mono font-bold text-primary uppercase tracking-[0.2em] leading-none">PROC_STRE_LOG :: {currentQ + 1} / {questionsLength}</span>
             <div className="h-2 w-full bg-slate-100 dark:bg-slate-900 rounded-full relative overflow-hidden border border-slate-200 dark:border-slate-800 shadow-inner">
