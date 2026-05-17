@@ -780,11 +780,14 @@ function Login() {
     setError(null); setSuccess(null);
     setGoogleLoading(true);
     try {
-      const result = await signInWithGoogle();
-      if (result?.user) await setUser(result.user);
+      await signInWithGoogle();
     } catch (e: any) {
       setError(e?.message || 'Google sign-in failed');
-    } finally { setGoogleLoading(false); }
+      setGoogleLoading(false);
+    }
+    // If signInWithGoogle returns (browser opened), wait for deep link
+    // Clear loading after 30s if no redirect
+    setTimeout(() => setGoogleLoading(false), 30000);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

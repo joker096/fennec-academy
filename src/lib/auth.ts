@@ -8,14 +8,17 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: 'fennec://callback',
+      redirectTo: 'com.fennec.academy://callback',
       queryParams: { access_type: 'offline', prompt: 'consent' },
     },
   });
   if (error) throw error;
   if (data?.url) {
     const { Browser } = await import('@capacitor/browser');
-    await Browser.open({ url: data.url, presentationStyle: 'fullscreen' });
+    await Browser.open({ url: data.url });
+    // Browser opens system browser. Google OAuth completes there.
+    // Google redirects to Supabase, Supabase redirects to com.fennec.academy://callback
+    // Android intent filter + appUrlOpen listener catches the redirect.
   }
   return null; // session set by appUrlOpen
 }
