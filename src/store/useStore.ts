@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { db, doc, getDoc, setDoc, updateDoc, query, collection, limit, getDocs, OperationType, handleFirestoreError, logEvent } from '../firebase';
+import { db, doc, getDoc, setDoc, updateDoc, query, collection, limit, getDocs, OperationType, handleFirestoreError, logEvent, auth } from '../firebase';
 import { UI_TRANSLATIONS } from '../data/translations';
 import { audioService, SoundEffect } from '../services/audioService';
 import { ACHIEVEMENTS } from '../data/achievements';
@@ -140,6 +140,7 @@ export interface ChatSession {
 
 interface UserState {
   uid: string | null;
+  firestoreUid: string | null;
   displayName: string | null;
   bio: string | null;
   location: string | null;
@@ -342,8 +343,15 @@ const safeJSONParse = (key: string, fallback: any) => {
   }
 };
 
+// Helper: resolves Firestore document UID using Firebase Auth (for Firestore rules match)
+// Falls back to Supabase UID for Capacitor/deep-link flows
+function getFsUid(supabaseUid: string | null): string {
+  return auth.currentUser?.uid || get().firestoreUid || supabaseUid || '';
+}
+
 export const useStore = create<UserState>((set, get) => ({
   uid: null,
+  firestoreUid: null,
   displayName: null,
   bio: null,
   location: null,
@@ -479,7 +487,8 @@ export const useStore = create<UserState>((set, get) => ({
   setUser: async (user) => {
     if (user) {
       logEvent('login', { method: 'google', uid: user.uid });
-      const userDocRef = doc(db, 'users', user.uid);
+      const firestoreUid = auth.currentUser?.uid || user.uid;
+      const userDocRef = doc(db, 'users', firestoreUid);
       try {
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
@@ -487,6 +496,7 @@ export const useStore = create<UserState>((set, get) => ({
           const isAdmin = userData.role === 'admin' || user.email === 'zaartyom@gmail.com';
           set({ 
             uid: user.uid,
+            firestoreUid,
             displayName: userData.displayName || user.displayName,
             bio: userData.bio || null,
             location: userData.location || null,
@@ -534,6 +544,8 @@ export const useStore = create<UserState>((set, get) => ({
           const isAdmin = user.email === 'zaartyom@gmail.com';
           const newUser = {
             uid: user.uid,
+            firestoreUid: firestoreUid,
+            supabaseUid: user.uid,
             displayName: user.displayName,
             bio: null,
             location: null,
@@ -575,7 +587,7 @@ export const useStore = create<UserState>((set, get) => ({
             lastUpdated: new Date().toISOString()
           };
           await setDoc(userDocRef, newUser);
-          set({ ...newUser, uid: user.uid, isLoaded: true });
+          set({ ...newUser, uid: user.uid, firestoreUid, isLoaded: true });
         }
 
         // Fetch global settings
@@ -589,7 +601,7 @@ export const useStore = create<UserState>((set, get) => ({
         }
 
         // Sync to public leaderboard
-        const leaderboardRef = doc(db, 'leaderboard', user.uid);
+        const leaderboardRef = doc(db, 'leaderboard', firestoreUid);
         const state = get();
         try {
           await withRetry(() => setDoc(leaderboardRef, {
@@ -613,7 +625,7 @@ export const useStore = create<UserState>((set, get) => ({
       } catch (error) {
         set({ isLoaded: true });
         try {
-          handleFirestoreError(error, OperationType.GET, `users/${user.uid}`);
+          handleFirestoreError(error, OperationType.GET, `users/${firestoreUid}`);
         } catch (err: any) {
           get().addNotification(err.message, 'error');
         }
@@ -621,6 +633,7 @@ export const useStore = create<UserState>((set, get) => ({
     } else {
       set({ 
         uid: null, 
+        firestoreUid: null,
         displayName: null, 
         email: null, 
         photoURL: null, 
@@ -827,7 +840,7 @@ export const useStore = create<UserState>((set, get) => ({
     };
     
     if (state.uid) {
-      updateDoc(doc(db, 'users', state.uid), newState).catch(e => handleFirestoreError(e, OperationType.UPDATE, `users/${state.uid}`));
+      updateDoc(doc(db, 'users', getFsUid(state.uid)), newState).catch(e => handleFirestoreError(e, OperationType.UPDATE, `users/${state.uid}`));
     }
     
     return newState;
@@ -837,17 +850,13 @@ export const useStore = create<UserState>((set, get) => ({
     const currentProgress = state.specialProgress[stat] || 0;
     const newProgress = currentProgress + amount;
     
-    if (newProgress >= 100) {
-      // Level up!
-      get().updateSpecial(stat, 1);
-      return state; // updateSpecial handles the state update
-    }
+    
     
     const updatedProgress = { ...state.specialProgress, [stat]: newProgress };
     const newState = { specialProgress: updatedProgress };
     
     if (state.uid) {
-      updateDoc(doc(db, 'users', state.uid), newState).catch(e => handleFirestoreError(e, OperationType.UPDATE, `users/${state.uid}`));
+      updateDoc(doc(db, 'users', getFsUid(state.uid)), newState).catch(e => handleFirestoreError(e, OperationType.UPDATE, `users/${state.uid}`));
     }
     
     return newState;
@@ -1294,7 +1303,7 @@ export const useStore = create<UserState>((set, get) => ({
       set({ achievements: newAchievements });
       localStorage.setItem('achievements', JSON.stringify(newAchievements));
       if (state.uid) {
-        updateDoc(doc(db, 'users', state.uid), { achievements: newAchievements }).catch(e => handleFirestoreError(e, OperationType.UPDATE, 'users'));
+        updateDoc(doc(db, 'users', getFsUid(state.uid)), { achievements: newAchievements }).catch(e => handleFirestoreError(e, OperationType.UPDATE, 'users'));
       }
     }
   },
@@ -2278,13 +2287,14 @@ export const useStore = create<UserState>((set, get) => ({
     // Sync to firestore if online
     const { uid } = get();
     if (uid) {
-      updateDoc(doc(db, 'users', uid), { 
+      const fsUid = getFsUid(uid);
+      updateDoc(doc(db, 'users', fsUid), { 
         factionId,
         factionXp: 0,
         weeklyFactionXp: 0,
         leagueTier: 'bronze'
       }).catch(e => handleFirestoreError(e, OperationType.UPDATE, `users/${uid}`));
-      updateDoc(doc(db, 'leaderboard', uid), { factionId, factionXp: 0 }).catch();
+      updateDoc(doc(db, 'leaderboard', fsUid), { factionId, factionXp: 0 }).catch();
     }
   },
 
@@ -2296,7 +2306,8 @@ export const useStore = create<UserState>((set, get) => ({
       
       const { uid } = get();
       if (uid) {
-        updateDoc(doc(db, 'users', uid), { unlockedCosmetics: newUnlocked })
+        const fsUid = getFsUid(uid);
+        updateDoc(doc(db, 'users', fsUid), { unlockedCosmetics: newUnlocked })
           .catch(e => handleFirestoreError(e, OperationType.UPDATE, `users/${uid}`));
       }
       
@@ -2311,7 +2322,8 @@ export const useStore = create<UserState>((set, get) => ({
     
     const { uid } = get();
     if (uid) {
-      updateDoc(doc(db, 'users', uid), { equippedFrame: frameId })
+      const fsUid = getFsUid(uid);
+      updateDoc(doc(db, 'users', fsUid), { equippedFrame: frameId })
         .catch(e => handleFirestoreError(e, OperationType.UPDATE, `users/${uid}`));
     }
     
@@ -2484,7 +2496,7 @@ export const useStore = create<UserState>((set, get) => ({
         get().checkDailyStreak();
       }
 
-      const userDoc = await getDoc(doc(db, 'users', userId));
+      const userDoc = await getDoc(doc(db, 'users', getFsUid(userId)));
 
       if (userDoc.exists()) {
         const data = userDoc.data();
@@ -2572,10 +2584,18 @@ export const useStore = create<UserState>((set, get) => ({
 
   saveProgress: async (userId: string) => {
     const state = get();
+    // Skip if no user or pending sync
     if (!userId || state.syncStatus === 'pending') return;
 
-    // Prevent excessive saving (min 3 seconds between cloud saves)
+    // Prevent excessive saving
     if (state.syncStatus === 'synced' && state.lastSyncTime && (Date.now() - new Date(state.lastSyncTime).getTime() < 3000)) {
+      return;
+    }
+
+    // Use Firebase UID for Firestore; skip cloud save if not available
+    const fsUid = getFsUid(userId);
+    if (!fsUid || fsUid === userId) {
+      // Firebase Auth not ready — defer cloud save, localStorage still works
       return;
     }
     
@@ -2646,10 +2666,10 @@ export const useStore = create<UserState>((set, get) => ({
       }
 
       set({ syncStatus: 'pending' });
-      await withRetry(() => setDoc(doc(db, 'users', userId), stateToSave, { merge: true }));
+      await withRetry(() => setDoc(doc(db, 'users', fsUid), stateToSave, { merge: true }));
       
       // Sync public data to leaderboard
-      const leaderboardRef = doc(db, 'leaderboard', userId);
+      const leaderboardRef = doc(db, 'leaderboard', fsUid);
       await withRetry(() => setDoc(leaderboardRef, {
         uid: state.uid,
         displayName: state.displayName,
@@ -2670,12 +2690,7 @@ export const useStore = create<UserState>((set, get) => ({
       set({ syncStatus: 'synced' });
     } catch (err) {
       set({ syncStatus: 'error' });
-      try {
-        handleFirestoreError(err, OperationType.WRITE, `users/${userId}`);
-      } catch (e: any) {
-        console.error('Save failed:', e.message);
-        // Don't show notification for every background save failure to avoid spam
-      }
+      console.warn('Cloud save skipped (offline or permissions)');
     }
   },
 
@@ -2692,16 +2707,12 @@ export const useStore = create<UserState>((set, get) => ({
       }
 
       const stateToSave = JSON.parse(localData);
-      await withRetry(() => setDoc(doc(db, 'users', state.uid), stateToSave, { merge: true }));
+      await withRetry(() => setDoc(doc(db, 'users', getFsUid(state.uid)), stateToSave, { merge: true }));
       set({ syncStatus: 'synced' });
       get().addNotification('Progress synced with cloud', 'success');
     } catch (err) {
       set({ syncStatus: 'error' });
-      try {
-        handleFirestoreError(err, OperationType.WRITE, `users/${state.uid}`);
-      } catch (e: any) {
-        get().addNotification(e.message, 'error');
-      }
+      console.warn('Sync failed (offline or permissions)');
     }
   },
 

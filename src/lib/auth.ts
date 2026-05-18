@@ -3,24 +3,55 @@ import type { User } from '@supabase/supabase-js';
 
 export { signOutSupabase as signOut };
 
-// Google Sign-In via system browser (Capacitor Browser plugin)
+function getRedirectUrl(): string {
+  if (typeof window === 'undefined') return '';
+  // Production URL from env or fallback to current origin (works for both local dev and production)
+  return import.meta.env.VITE_APP_URL || window.location.origin;
+}
+
+function isCapacitor(): boolean {
+  try {
+    return !!(window as any).Capacitor?.isNativePlatform();
+  } catch {
+    return false;
+  }
+}
+
+// Google Sign-In
 export async function signInWithGoogle() {
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  const redirectTo = getRedirectUrl();
+  console.log('[Auth] signInWithGoogle — redirectTo:', redirectTo);
+
+  if (isCapacitor()) {
+    console.log('[Auth] Capacitor detected, using Browser.open + deep link flow');
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo,
+        queryParams: { access_type: 'offline', prompt: 'consent' },
+        skipBrowserRedirect: true,
+      },
+    });
+    if (error) throw error;
+    if (data?.url) {
+      const { Browser } = await import('@capacitor/browser');
+      await Browser.open({ url: data.url });
+    }
+    return null;
+  }
+
+  // Web: Supabase SDK handles the full PKCE redirect flow automatically
+  console.log('[Auth] Web environment — SD K redirects to Google OAuth...');
+  const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: 'https://joker096.github.io/fennec-reset-password/',
+      redirectTo,
       queryParams: { access_type: 'offline', prompt: 'consent' },
     },
   });
   if (error) throw error;
-  if (data?.url) {
-    const { Browser } = await import('@capacitor/browser');
-    await Browser.open({ url: data.url });
-    // Browser opens system browser. Google OAuth completes there.
-    // Google redirects to Supabase, Supabase redirects to com.fennec.academy://callback
-    // Android intent filter + appUrlOpen listener catches the redirect.
-  }
-  return null; // session set by appUrlOpen
+  // On web, the call above redirects the browser — code below never executes
+  return null;
 }
 
 export function mapSupabaseUser(user: User | null): {
@@ -66,9 +97,9 @@ export async function handleAuthState() {
 
 // Send password reset link
 export async function resetPassword(email: string) {
-  console.log('[Auth] Sending reset link to:', email);
+  console.log('[Auth] Resetting password for:', email);
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: 'https://joker096.github.io/fennec-reset-password/',
+    redirectTo: getRedirectUrl(),
   });
   if (error) {
     console.error('[Auth] resetPassword error:', error.message);

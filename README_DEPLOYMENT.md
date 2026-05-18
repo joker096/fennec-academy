@@ -1,4 +1,5 @@
 # Руководство по проекту Fennec Brotherhood
+cd F:\AISTUDIO\Fennec\android
 
 npx cap sync android
 npm run deploy:aab

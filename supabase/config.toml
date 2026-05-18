@@ -1,0 +1,3 @@
+[auth]
+site_url = "https://joker096.github.io/fennec-reset-password/"
+additional_redirect_urls = ["https://joker096.github.io/fennec-reset-password/*", "capacitor://localhost", "http://localhost:3000", "https://localhost"]

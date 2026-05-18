@@ -36,3 +36,6 @@ test.mp3
 
 # PSD source files
 LOGO/*.psd
+
+# Google Services (contains API keys)
+**/google-services.json

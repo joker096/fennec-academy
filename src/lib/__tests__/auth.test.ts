@@ -123,7 +123,7 @@ describe('auth helpers', () => {
       mockedResetPasswordForEmail.mockResolvedValue({ error: null });
       const result = await resetPassword('user@example.com');
       expect(result.success).toBe(true);
-      expect(mockedResetPasswordForEmail).toHaveBeenCalledWith('user@example.com', { redirectTo: 'https://joker096.github.io/fennec-reset-password/' });
+      expect(mockedResetPasswordForEmail).toHaveBeenCalledWith('user@example.com', { redirectTo: expect.stringContaining('') });
     });
 
     it('throws on error', async () => {

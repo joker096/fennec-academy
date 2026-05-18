@@ -6,23 +6,6 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIU
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Helper to sign in with Google OAuth
-export async function signInWithGoogle() {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
-      queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
-      },
-    },
-  });
-
-  if (error) throw error;
-  return data;
-}
-
 // Helper to get current session
 export async function getCurrentSession() {
   const { data: { session }, error } = await supabase.auth.getSession();

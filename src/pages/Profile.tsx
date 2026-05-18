@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { auth, signOut } from '../firebase';
+import { auth, signOut as firebaseSignOut } from '../firebase';
 import { User, Mail, Shield, Award, Star, Zap, LogOut, Settings, Globe, Heart, Coins, Flame, Layers, CheckCircle2, Volume2, VolumeX, Trophy, RefreshCw, ChevronRight, Clock, Download, Palette, Monitor, MapPin, AlignLeft, Sparkles } from 'lucide-react';
 import { UI_TRANSLATIONS } from '../data/translations';
 import { ACADEMIC_PERKS as FALLOUT_PERKS, LANGUAGES } from '../data/gameData';
 import { audioService, SoundEffect } from '../services/audioService';
+import { signOut as supabaseSignOut } from '../lib/auth';
 import Achievements from '../components/Achievements';
 import { Link } from 'react-router-dom';
 import Tooltip from '../components/Tooltip';
@@ -188,7 +189,15 @@ Join me at the Academy!
               {isSyncing ? t.syncing : 'Sync'}
             </button>
             <button 
-              onClick={() => { audioService.play(SoundEffect.CLICK); signOut(auth); }}
+              onClick={async () => {
+                audioService.play(SoundEffect.CLICK);
+                try {
+                  await supabaseSignOut();
+                  await firebaseSignOut(auth);
+                } catch (e) {
+                  console.error('[Profile] Sign out error:', e);
+                }
+              }}
               className="flex items-center gap-2 bg-rose-50 text-rose-600 border border-rose-100 px-4 py-2 rounded-xl font-bold uppercase text-[9px] tracking-widest hover:bg-rose-100 transition-all dark:bg-rose-900/10 dark:text-rose-400 dark:border-rose-900/30 shadow-sm"
             >
               <LogOut className="w-3.5 h-3.5" />
